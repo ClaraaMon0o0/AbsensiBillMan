@@ -7,8 +7,7 @@
 <x-card>
 
 <form method="POST"
-      action="{{ route('petugas.absensi.store') }}"
-      enctype="multipart/form-data">
+      action="{{ route('petugas.absensi.store') }}">
 
     @csrf
 
@@ -58,31 +57,32 @@
         @enderror
     </div>
 
-    {{-- Foto --}}
+    {{-- FOTO DARI KAMERA --}}
     <div class="mb-4">
-        <label class="block mb-1 font-medium">Foto Bukti (Wajib Kamera)</label>
+        <label class="block mb-2 font-medium">Foto Bukti (Wajib Kamera)</label>
 
-        <input type="file"
-               name="foto"
-               id="fotoInput"
-               accept="image/*"
-               capture="environment"
-               class="w-full border p-2 rounded @error('foto') border-red-500 @enderror"
-               required>
+        <video id="camera" autoplay class="w-64 rounded border shadow"></video>
 
-        @error('foto')
+        <canvas id="canvas" class="hidden"></canvas>
+
+        <div class="mt-3">
+            <button type="button"
+                    onclick="takePhoto()"
+                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Ambil Foto
+            </button>
+        </div>
+
+        <input type="hidden" name="foto_base64" id="fotoBase64" required>
+
+        @error('foto_base64')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
         @enderror
-
-        {{-- Preview --}}
-        <div class="mt-4">
-            <img id="previewImage"
-                 class="hidden w-48 rounded border shadow">
-        </div>
     </div>
 
     {{-- Button --}}
-    <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+    <button type="submit"
+            class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
         Simpan Absensi
     </button>
 
@@ -91,24 +91,33 @@
 </x-card>
 
 
-{{-- SCRIPT PREVIEW FOTO --}}
+{{-- SCRIPT KAMERA --}}
 <script>
-document.getElementById('fotoInput').addEventListener('change', function(event) {
+const video = document.getElementById('camera');
+const canvas = document.getElementById('canvas');
+const fotoInput = document.getElementById('fotoBase64');
 
-    const file = event.target.files[0];
-    const preview = document.getElementById('previewImage');
-
-    if (file) {
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            preview.classList.remove('hidden');
-        }
-
-        reader.readAsDataURL(file);
-    }
+navigator.mediaDevices.getUserMedia({ 
+    video: { facingMode: "environment" } 
+})
+.then(stream => {
+    video.srcObject = stream;
+})
+.catch(err => {
+    alert("Kamera tidak dapat diakses!");
 });
+
+function takePhoto() {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    fotoInput.value = imageData;
+
+    alert("Foto berhasil diambil!");
+}
 </script>
 
 @endsection

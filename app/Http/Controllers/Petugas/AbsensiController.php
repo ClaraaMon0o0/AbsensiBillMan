@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class AbsensiController extends Controller
 {
@@ -29,7 +30,7 @@ class AbsensiController extends Controller
             'kegiatan' => 'required|integer',
             'keterangan' => 'required|string',
             'status' => 'required|string',
-            'foto' => 'required|image|max:2048',
+            'foto_base64' => 'required', // DIUBAH
         ]);
 
         $today = now()->toDateString();
@@ -41,10 +42,16 @@ class AbsensiController extends Controller
             return back()->with('error', 'Anda sudah absen hari ini.');
         }
 
-        $path = $request->file('foto')->store(
-            'absensi/' . $today,
-            'public'
-        );
+        // Ambil data base64
+        $image = $request->foto_base64;
+
+        // Hilangkan prefix base64
+        $image = str_replace('data:image/jpeg;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+
+        $imageName = 'absensi/' . $today . '/' . uniqid() . '.jpg';
+
+        Storage::disk('public')->put($imageName, base64_decode($image));
 
         Absensi::create([
             'user_id' => auth()->id(),
@@ -52,7 +59,7 @@ class AbsensiController extends Controller
             'kegiatan' => $request->kegiatan,
             'keterangan' => $request->keterangan,
             'status' => $request->status,
-            'foto_path' => $path,
+            'foto_path' => $imageName,
         ]);
 
         return redirect()
