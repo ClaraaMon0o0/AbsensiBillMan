@@ -31,7 +31,8 @@
         <label class="block mb-1 font-medium">Keterangan</label>
         <textarea name="keterangan"
                   class="w-full border p-2 rounded @error('keterangan') border-red-500 @enderror"
-                  rows="3">{{ old('keterangan') }}</textarea>
+                  rows="3"
+                  required>{{ old('keterangan') }}</textarea>
 
         @error('keterangan')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

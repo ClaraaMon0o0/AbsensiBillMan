@@ -27,7 +27,7 @@ class AbsensiController extends Controller
     {
         $request->validate([
             'kegiatan' => 'required|integer',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'required|string',
             'status' => 'required|string',
             'foto' => 'required|image|max:2048',
         ]);
