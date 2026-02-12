@@ -63,11 +63,15 @@
 
         <video id="camera" autoplay class="w-64 rounded border shadow"></video>
 
+        <img id="previewImage"
+             class="hidden w-64 rounded border shadow mt-2">
+
         <canvas id="canvas" class="hidden"></canvas>
 
         <div class="mt-3">
             <button type="button"
-                    onclick="takePhoto()"
+                    id="captureBtn"
+                    onclick="handlePhoto()"
                     class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                 Ambil Foto
             </button>
@@ -90,22 +94,48 @@
 
 </x-card>
 
-
 {{-- SCRIPT KAMERA --}}
 <script>
-const video = document.getElementById('camera');
-const canvas = document.getElementById('canvas');
-const fotoInput = document.getElementById('fotoBase64');
+let video = document.getElementById('camera');
+let canvas = document.getElementById('canvas');
+let preview = document.getElementById('previewImage');
+let fotoInput = document.getElementById('fotoBase64');
+let captureBtn = document.getElementById('captureBtn');
+let stream;
 
-navigator.mediaDevices.getUserMedia({ 
-    video: { facingMode: "environment" } 
-})
-.then(stream => {
-    video.srcObject = stream;
-})
-.catch(err => {
-    alert("Kamera tidak dapat diakses!");
-});
+startCamera();
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+    })
+    .then(s => {
+        stream = s;
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        preview.classList.add('hidden');
+        captureBtn.textContent = "Ambil Foto";
+        captureBtn.classList.remove("bg-yellow-600");
+        captureBtn.classList.add("bg-green-600");
+    })
+    .catch(err => {
+        alert("Kamera tidak dapat diakses!");
+    });
+}
+
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+    }
+}
+
+function handlePhoto() {
+    if (captureBtn.textContent === "Ambil Foto") {
+        takePhoto();
+    } else {
+        retakePhoto();
+    }
+}
 
 function takePhoto() {
     const context = canvas.getContext('2d');
@@ -116,7 +146,20 @@ function takePhoto() {
     const imageData = canvas.toDataURL('image/jpeg', 0.8);
     fotoInput.value = imageData;
 
-    alert("Foto berhasil diambil!");
+    preview.src = imageData;
+    preview.classList.remove('hidden');
+    video.classList.add('hidden');
+
+    stopCamera();
+
+    captureBtn.textContent = "Ambil Ulang Foto";
+    captureBtn.classList.remove("bg-green-600");
+    captureBtn.classList.add("bg-yellow-600");
+}
+
+function retakePhoto() {
+    fotoInput.value = "";
+    startCamera();
 }
 </script>
 
