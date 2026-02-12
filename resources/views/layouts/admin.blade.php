@@ -82,6 +82,12 @@
 
         {{-- Navigation --}}
         <nav class="flex-1 p-6 space-y-2 text-sm relative z-10 mt-4">
+
+            <a href="{{ route('admin.dashboard') }}"
+               class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-300 group">
+                <i class="fas fa-chart-line w-5 text-center text-yellow-400/80 group-hover:text-yellow-400"></i>
+                <span class="font-medium text-white/90 group-hover:text-white">Dashboard Admin</span>
+            </a>
             
             <a href="{{ route('admin.absensi') }}"
                class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-300 group">
