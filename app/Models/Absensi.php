@@ -12,7 +12,7 @@ class Absensi extends Model
 
     protected $table = 'absensis';
 
-    // 🔥 WAJIB KARENA PAKAI UUID
+
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -29,7 +29,7 @@ class Absensi extends Model
         'tanggal' => 'date',
     ];
 
-    // 🔥 AUTO GENERATE UUID
+ 
     protected static function booted()
     {
         static::creating(function ($absensi) {
@@ -39,7 +39,7 @@ class Absensi extends Model
         });
     }
 
-    // 🔥 RELASI KE USER
+
     public function user()
     {
         return $this->belongsTo(User::class);
