@@ -6,7 +6,9 @@
 
 <x-card>
 
-<form method="POST" action="{{ route('admin.users.update', $user) }}">
+<form method="POST" 
+      action="{{ route('admin.users.update', $user) }}"
+      onsubmit="return confirm('Apakah Anda yakin ingin memperbarui data user {{ $user->name }}?')">
 @csrf
 @method('PUT')
 
@@ -36,7 +38,8 @@
     </select>
 </div>
 
-<button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+<button type="submit"
+        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
     Update
 </button>
 

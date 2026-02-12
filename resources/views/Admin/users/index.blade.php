@@ -45,10 +45,11 @@
 
                     <form action="{{ route('admin.users.destroy', $user) }}"
                           method="POST"
-                          onsubmit="return confirm('Yakin hapus user ini?')">
+                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus user {{ $user->name }}?\n\nData yang sudah dihapus tidak dapat dikembalikan!')">
                         @csrf
                         @method('DELETE')
-                        <button class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                        <button type="submit"
+                                class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
                             Hapus
                         </button>
                     </form>
