@@ -30,14 +30,15 @@ class AbsensiController extends Controller
             'kegiatan' => 'required|integer',
             'keterangan' => 'required|string',
             'status' => 'required|string',
-            'foto_base64' => 'required', // DIUBAH
+            'foto_base64' => 'required',
         ]);
 
-        $today = now()->toDateString();
+        $now = now(); // ⬅ ambil waktu lengkap (tanggal + jam)
+        $today = $now->toDateString(); // ⬅ tetap dipakai untuk cek 1x per hari
 
-        // Cek sudah absen hari ini
+        // Cek sudah absen hari ini (tanpa lihat jam)
         if (Absensi::where('user_id', auth()->id())
-            ->where('tanggal', $today)
+            ->whereDate('tanggal', $today) // ⬅ DIUBAH
             ->exists()) {
             return back()->with('error', 'Anda sudah absen hari ini.');
         }
@@ -45,7 +46,6 @@ class AbsensiController extends Controller
         // Ambil data base64
         $image = $request->foto_base64;
 
-        // Hilangkan prefix base64
         $image = str_replace('data:image/jpeg;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
 
@@ -55,7 +55,7 @@ class AbsensiController extends Controller
 
         Absensi::create([
             'user_id' => auth()->id(),
-            'tanggal' => $today,
+            'tanggal' => $now, // ⬅ DIUBAH supaya simpan jam juga
             'kegiatan' => $request->kegiatan,
             'keterangan' => $request->keterangan,
             'status' => $request->status,
