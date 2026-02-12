@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class AbsensiController extends Controller
 {
@@ -27,32 +28,38 @@ class AbsensiController extends Controller
     {
         $request->validate([
             'kegiatan' => 'required|integer',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'required|string',
             'status' => 'required|string',
-            'foto' => 'required|image|max:2048',
+            'foto_base64' => 'required',
         ]);
 
-        $today = now()->toDateString();
+        $now = now(); // ⬅ ambil waktu lengkap (tanggal + jam)
+        $today = $now->toDateString(); // ⬅ tetap dipakai untuk cek 1x per hari
 
-        // Cek sudah absen hari ini
+        // Cek sudah absen hari ini (tanpa lihat jam)
         if (Absensi::where('user_id', auth()->id())
-            ->where('tanggal', $today)
+            ->whereDate('tanggal', $today) // ⬅ DIUBAH
             ->exists()) {
             return back()->with('error', 'Anda sudah absen hari ini.');
         }
 
-        $path = $request->file('foto')->store(
-            'absensi/' . $today,
-            'public'
-        );
+        // Ambil data base64
+        $image = $request->foto_base64;
+
+        $image = str_replace('data:image/jpeg;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+
+        $imageName = 'absensi/' . $today . '/' . uniqid() . '.jpg';
+
+        Storage::disk('public')->put($imageName, base64_decode($image));
 
         Absensi::create([
             'user_id' => auth()->id(),
-            'tanggal' => $today,
+            'tanggal' => $now, // ⬅ DIUBAH supaya simpan jam juga
             'kegiatan' => $request->kegiatan,
             'keterangan' => $request->keterangan,
             'status' => $request->status,
-            'foto_path' => $path,
+            'foto_path' => $imageName,
         ]);
 
         return redirect()

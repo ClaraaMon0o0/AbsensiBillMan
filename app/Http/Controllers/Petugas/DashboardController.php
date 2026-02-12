@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $userId = auth()->id();
 
         $sudahAbsen = Absensi::where('user_id', $userId)
-            ->where('tanggal', $today)
+            ->whereDate('tanggal', $today)
             ->exists();
 
         $totalAbsensi = Absensi::where('user_id', $userId)->count();

@@ -10,7 +10,10 @@ return new class extends Migration {
         Schema::create('absensis', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->date('tanggal');
+
+            // Simpan tanggal + jam
+            $table->dateTime('tanggal');
+
             $table->integer('kegiatan');
             $table->text('keterangan')->nullable();
             $table->string('status');
@@ -22,6 +25,7 @@ return new class extends Migration {
                   ->on('users')
                   ->onDelete('cascade');
 
+            // HANYA 1X ABSEN PER HARI
             $table->unique(['user_id', 'tanggal']);
         });
     }

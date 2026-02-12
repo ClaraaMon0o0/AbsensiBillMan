@@ -26,7 +26,7 @@ class Absensi extends Model
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal' => 'datetime',
     ];
 
  

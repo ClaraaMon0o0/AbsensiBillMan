@@ -6,7 +6,9 @@
 
 <x-card>
 
-<form method="POST" action="{{ route('admin.users.store') }}">
+<form method="POST" 
+      action="{{ route('admin.users.store') }}"
+      onsubmit="return confirm('Apakah Anda yakin ingin menambahkan user baru ini?')">
 @csrf
 
 <div class="mb-4">
@@ -32,7 +34,8 @@
     </select>
 </div>
 
-<button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+<button type="submit"
+        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
     Simpan
 </button>
 
