@@ -7,15 +7,28 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request; // Tambahkan ini
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View // Tambahkan Request $request
     {
-        $users = User::latest()->paginate(10);
+        $users = User::query()
+            ->when($request->search, function($query, $search) {
+                return $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->role, function($query, $role) {
+                return $query->where('role', $role);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString(); // Tambahkan ini untuk mempertahankan filter di pagination
 
         return view('admin.users.index', compact('users'));
     }
