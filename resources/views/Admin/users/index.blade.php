@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="flex items-center justify-between mb-8">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
     <div class="flex items-center gap-3">
         <div class="w-12 h-12 bg-gradient-to-br from-[#0B2D45]/10 to-[#155E76]/10 rounded-xl flex items-center justify-center border border-[#155E76]/20">
             <i class="fas fa-users-cog text-[#155E76] text-xl"></i>
@@ -14,7 +14,7 @@
     </div>
     
     <a href="{{ route('admin.users.create') }}"
-       class="bg-gradient-to-r from-[#0B2D45] to-[#155E76] text-white px-6 py-3 rounded-xl hover:from-[#155E76] hover:to-[#1A7A8C] transition-all duration-300 shadow-lg shadow-[#0B2D45]/30 flex items-center gap-2.5 text-sm font-semibold group">
+       class="w-full sm:w-auto bg-gradient-to-r from-[#0B2D45] to-[#155E76] text-white px-6 py-3 rounded-xl hover:from-[#155E76] hover:to-[#1A7A8C] transition-all duration-300 shadow-lg shadow-[#0B2D45]/30 flex items-center justify-center gap-2.5 text-sm font-semibold group">
         <div class="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
             <i class="fas fa-plus text-white text-xs"></i>
         </div>
@@ -26,9 +26,12 @@
     @if($users->count() > 0)
 
     <!-- Search & Filter Bar -->
-    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="relative">
+    <form method="GET" action="{{ route('admin.users.index') }}" 
+          class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+        <div class="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
+
+            <div class="relative w-full sm:w-64">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-search text-gray-400 text-sm"></i>
                 </div>
@@ -36,29 +39,32 @@
                        name="search"
                        value="{{ request('search') }}"
                        placeholder="Cari user..." 
-                       class="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#155E76] focus:ring-2 focus:ring-[#155E76]/20 transition-all text-sm w-64">
+                       class="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#155E76] focus:ring-2 focus:ring-[#155E76]/20 transition-all text-sm w-full">
             </div>
+
             <select name="role" 
-                    class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#155E76] focus:ring-2 focus:ring-[#155E76]/20 transition-all text-sm appearance-none">
+                    class="w-full sm:w-auto px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#155E76] focus:ring-2 focus:ring-[#155E76]/20 transition-all text-sm appearance-none">
                 <option value="">Semua Role</option>
                 <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="petugas" {{ request('role') == 'petugas' ? 'selected' : '' }}>Petugas</option>
             </select>
+
             <button type="submit" 
-                    class="px-4 py-2.5 bg-gradient-to-r from-[#0B2D45] to-[#155E76] text-white rounded-xl hover:from-[#155E76] hover:to-[#1A7A8C] transition-all duration-300 shadow-md shadow-[#0B2D45]/30 flex items-center gap-2 text-sm font-semibold">
+                    class="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-[#0B2D45] to-[#155E76] text-white rounded-xl hover:from-[#155E76] hover:to-[#1A7A8C] transition-all duration-300 shadow-md shadow-[#0B2D45]/30 flex items-center justify-center gap-2 text-sm font-semibold">
                 <i class="fas fa-filter"></i>
                 <span>Filter</span>
             </button>
             
             @if(request('search') || request('role'))
             <a href="{{ route('admin.users.index') }}" 
-               class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center gap-2 text-sm font-semibold border border-gray-300">
+               class="w-full sm:w-auto px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2 text-sm font-semibold border border-gray-300">
                 <i class="fas fa-times"></i>
                 <span>Reset</span>
             </a>
             @endif
         </div>
-        <div class="text-sm text-gray-500">
+
+        <div class="text-sm text-gray-500 self-start lg:self-auto">
             <i class="fas fa-database mr-1"></i> Total: {{ $users->total() }} user
         </div>
     </form>
@@ -129,7 +135,7 @@
                     </td>
                     
                     <td class="px-6 py-4">
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             @if($user->id !== auth()->id())
                             <a href="{{ route('admin.users.edit', $user) }}"
                                class="inline-flex items-center gap-1.5 bg-gradient-to-r from-yellow-50 to-yellow-100 text-yellow-700 px-3 py-2 rounded-lg text-xs font-semibold hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 border border-yellow-300 shadow-sm hover:shadow-md">
@@ -162,7 +168,7 @@
         </table>
     </div>
 
-    <div class="mt-6 flex items-center justify-between">
+    <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="text-sm text-gray-500">
             Menampilkan {{ $users->firstItem() }} - {{ $users->lastItem() }} dari {{ $users->total() }} user
         </div>
@@ -185,15 +191,15 @@
         <p class="text-sm text-gray-500 mt-2 max-w-md mx-auto">
             Mulai kelola sistem absensi dengan menambahkan petugas atau administrator pertama Anda.
         </p>
-        <div class="flex items-center justify-center gap-4 mt-8">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
             <a href="{{ route('admin.users.create') }}" 
-               class="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#0B2D45] to-[#155E76] text-white px-6 py-3.5 rounded-xl hover:from-[#155E76] hover:to-[#1A7A8C] transition-all duration-300 shadow-lg shadow-[#0B2D45]/30 text-sm font-semibold group">
+               class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#0B2D45] to-[#155E76] text-white px-6 py-3.5 rounded-xl hover:from-[#155E76] hover:to-[#1A7A8C] transition-all duration-300 shadow-lg shadow-[#0B2D45]/30 text-sm font-semibold group">
                 <div class="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:rotate-90 transition-transform">
                     <i class="fas fa-plus text-white text-xs"></i>
                 </div>
                 <span>Tambah User Pertama</span>
             </a>
-            <a href="#" class="inline-flex items-center gap-2 bg-white text-gray-600 px-6 py-3.5 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 text-sm font-semibold">
+            <a href="#" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-gray-600 px-6 py-3.5 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 text-sm font-semibold">
                 <i class="fas fa-book-open"></i>
                 <span>Pelajari Lebih Lanjut</span>
             </a>
