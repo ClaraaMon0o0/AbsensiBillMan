@@ -7,17 +7,32 @@ use App\Models\Absensi;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
+use App\Models\AbsensiSetting;
+
 
 class AbsensiController extends Controller
 {
-    public function index(): View
-    {
-        $absensis = Absensi::where('user_id', auth()->id())
-            ->latest()
-            ->paginate(10);
+    public function index(Request $request): View
+{
+    $query = Absensi::where('user_id', auth()->id());
 
-        return view('petugas.absensi.index', compact('absensis'));
+    // Filter tanggal
+    if ($request->filled('tanggal')) {
+        $query->whereDate('tanggal', $request->tanggal);
     }
+
+    // Filter status
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $absensis = $query
+        ->latest()
+        ->paginate(10);
+
+    return view('petugas.absensi.index', compact('absensis'));
+}
+
 
     public function create(): View
     {
@@ -26,6 +41,13 @@ class AbsensiController extends Controller
 
     public function store(Request $request)
     {
+            // 🔥 CEK STATUS ABSENSI (DITUTUP / DIBUKA)
+        $setting = AbsensiSetting::first();
+
+        if (!$setting || !$setting->is_open) {
+            return back()->with('error', 'Absensi sedang ditutup oleh admin.');
+        }
+
         $request->validate([
             'kegiatan' => 'required|integer',
             'keterangan' => 'required|string',

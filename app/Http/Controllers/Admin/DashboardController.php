@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
         $totalPetugas = User::where('role', 'petugas')->count();
 
-        $totalAbsensiHariIni = Absensi::where('tanggal', $today)->count();
+        $totalAbsensiHariIni = Absensi::whereDate('tanggal', $today)->count();
 
         $totalHadir = Absensi::where('tanggal', $today)
             ->where('status', 'Hadir')

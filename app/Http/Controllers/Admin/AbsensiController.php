@@ -16,7 +16,7 @@ class AbsensiController extends Controller
         $query = Absensi::with('user')->latest();
 
         if ($request->filled('tanggal')) {
-            $query->where('tanggal', $request->tanggal);
+            $query->whereDate('tanggal', $request->tanggal);
         }
 
         if ($request->filled('user_id')) {
@@ -34,12 +34,21 @@ class AbsensiController extends Controller
 
     public function export(Request $request)
     {
-    $tanggal = $request->tanggal;
+        $tanggal = $request->tanggal;
 
-    return Excel::download(
-        new AbsensiExport($tanggal),
-        'laporan-absensi.xlsx'
-    );
+        // Kalau ada tanggal dipilih → pakai tanggal itu
+        if ($tanggal) {
+            $fileName = 'laporan-absensi-' . \Carbon\Carbon::parse($tanggal)->format('d-m-y') . '.xlsx';
+        } else {
+            // Kalau tidak ada filter tanggal → pakai tanggal hari ini
+            $fileName = 'laporan-absensi-' . now()->format('d-m-y') . '.xlsx';
+        }
+
+        return Excel::download(
+            new AbsensiExport($tanggal),
+            $fileName
+        );
     }
+
 
 }
